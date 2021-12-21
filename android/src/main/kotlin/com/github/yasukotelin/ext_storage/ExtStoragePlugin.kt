@@ -1,21 +1,13 @@
 package com.github.yasukotelin.ext_storage
 
 import android.os.Environment
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
 
-class ExtStoragePlugin: MethodCallHandler {
-  companion object {
-    @JvmStatic
-    fun registerWith(registrar: Registrar) {
-      val channel = MethodChannel(registrar.messenger(), "ext_storage")
-      channel.setMethodCallHandler(ExtStoragePlugin())
-    }
-  }
-
+class ExtStoragePlugin: MethodCallHandler, FlutterPlugin {
   override fun onMethodCall(call: MethodCall, result: Result) {
     when (call.method) {
       "getExternalStorageDirectory" ->
@@ -26,5 +18,13 @@ class ExtStoragePlugin: MethodCallHandler {
       }
       else -> result.notImplemented()
     }
+  }
+
+  override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    val channel = MethodChannel(binding.binaryMessenger, "ext_storage")
+    channel.setMethodCallHandler(this)
+  }
+
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
   }
 }
